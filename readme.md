@@ -1,10 +1,6 @@
 # FoundationPose: Unified 6D Pose Estimation and Tracking of Novel Objects
 [[Paper]](https://arxiv.org/abs/2312.08344) [[Website]](https://nvlabs.github.io/FoundationPose/)
 
-This is the official implementation of our paper to be appeared in CVPR 2024 (Highlight)
-
-Contributors: Bowen Wen, Wei Yang, Jan Kautz, Stan Birchfield
-
 We present FoundationPose, a unified foundation model for 6D object pose estimation and tracking, supporting both model-based and model-free setups. Our approach can be instantly applied at test-time to a novel object without fine-tuning, as long as its CAD model is given, or a small number of reference images are captured. We bridge the gap between these two setups with a neural implicit representation that allows for effective novel view synthesis, keeping the downstream pose estimation modules invariant under the same unified framework. Strong generalizability is achieved via large-scale synthetic training, aided by a large language model (LLM), a novel transformer-based architecture, and contrastive learning formulation. Extensive evaluation on multiple public datasets involving challenging scenarios and objects indicate our unified approach outperforms existing methods specialized for each task by a large margin. In addition, it even achieves comparable results to instance-level methods despite the reduced assumptions.
 
 # Data prepare
@@ -73,15 +69,6 @@ The paths have been set in argparse by default. If you need to change the scene,
 ```
 python run_demo.py
 ```
-
-
-<img src="assets/demo.jpg" width="50%">
-
-
-Feel free to try on other objects (**no need to retrain**) such as driller, by changing the paths in argparse.
-
-<img src="assets/demo_driller.jpg" width="50%">
-
 
 # Run on public datasets (LINEMOD, YCB-Video)
 
