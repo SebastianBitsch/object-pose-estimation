@@ -7,54 +7,6 @@ Contributors: Bowen Wen, Wei Yang, Jan Kautz, Stan Birchfield
 
 We present FoundationPose, a unified foundation model for 6D object pose estimation and tracking, supporting both model-based and model-free setups. Our approach can be instantly applied at test-time to a novel object without fine-tuning, as long as its CAD model is given, or a small number of reference images are captured. We bridge the gap between these two setups with a neural implicit representation that allows for effective novel view synthesis, keeping the downstream pose estimation modules invariant under the same unified framework. Strong generalizability is achieved via large-scale synthetic training, aided by a large language model (LLM), a novel transformer-based architecture, and contrastive learning formulation. Extensive evaluation on multiple public datasets involving challenging scenarios and objects indicate our unified approach outperforms existing methods specialized for each task by a large margin. In addition, it even achieves comparable results to instance-level methods despite the reduced assumptions.
 
-
-<img src="assets/intro.jpg" width="70%">
-
-**🤖 For ROS version, please check [Isaac ROS Pose Estimation](https://github.com/NVIDIA-ISAAC-ROS/isaac_ros_pose_estimation), which enjoys TRT fast inference and C++ speed up.**
-
-\
-**🥇 No. 1 on the world-wide [BOP leaderboard](https://bop.felk.cvut.cz/leaderboards/pose-estimation-unseen-bop23/core-datasets/) (as of 2024/03) for model-based novel object pose estimation.**
-<img src="assets/bop.jpg" width="80%">
-
-## Demos
-
-Robotic Applications:
-
-https://github.com/NVlabs/FoundationPose/assets/23078192/aa341004-5a15-4293-b3da-000471fd74ed
-
-
-AR Applications:
-
-https://github.com/NVlabs/FoundationPose/assets/23078192/80e96855-a73c-4bee-bcef-7cba92df55ca
-
-
-Results on YCB-Video dataset:
-
-https://github.com/NVlabs/FoundationPose/assets/23078192/9b5bedde-755b-44ed-a973-45ec85a10bbe
-
-
-
-# Bibtex
-```bibtex
-@InProceedings{foundationposewen2024,
-author        = {Bowen Wen, Wei Yang, Jan Kautz, Stan Birchfield},
-title         = {{FoundationPose}: Unified 6D Pose Estimation and Tracking of Novel Objects},
-booktitle     = {CVPR},
-year          = {2024},
-}
-```
-
-If you find the model-free setup useful, please also consider cite:
-
-```bibtex
-@InProceedings{bundlesdfwen2023,
-author        = {Bowen Wen and Jonathan Tremblay and Valts Blukis and Stephen Tyree and Thomas M\"{u}ller and Alex Evans and Dieter Fox and Jan Kautz and Stan Birchfield},
-title         = {{BundleSDF}: {N}eural 6-{DoF} Tracking and {3D} Reconstruction of Unknown Objects},
-booktitle     = {CVPR},
-year          = {2023},
-}
-```
-
 # Data prepare
 
 
@@ -164,8 +116,6 @@ python run_ycb_video.py --ycbv_dir /mnt/9a72c439-d0a7-45e8-8d20-d7a235d02763/DAT
 # Training data download
 Our training data include scenes using 3D assets from GSO and Objaverse, rendered with high quality photo-realism and large domain randomization. Each data point includes **RGB, depth, object pose, camera pose, instance segmentation, 2D bounding box**. [[Google Drive]](https://drive.google.com/drive/folders/1s4pB6p4ApfWMiMjmTXOFco8dHbNXikp-?usp=sharing).
 
-<img src="assets/train_data_vis.png" width="80%">
-
 - To parse the camera params including extrinsics and intrinsics
   ```
   with open(f'{base_dir}/camera_params/camera_params_000000.json','r') as ff:
@@ -189,21 +139,3 @@ Our training data include scenes using 3D assets from GSO and Objaverse, rendere
   K[1,2] = cy
   ```
 
-
-
-# Notes
-Due to the legal restrictions of Stable-Diffusion that is trained on LAION dataset, we are not able to release the diffusion-based texture augmented data, nor the pretrained weights using it. We thus release the version without training on diffusion-augmented data. Slight performance degradation is expected.
-
-# Acknowledgement
-
-We would like to thank Jeff Smith for helping with the code release; NVIDIA Isaac Sim and Omniverse team for the support on synthetic data generation; Tianshi Cao for the valuable discussions. Finally, we are also grateful for the positive feebacks and constructive suggestions brought up by reviewers and AC at CVPR.
-
-<img src="assets/cvpr_review.png" width="100%">
-
-
-# License
-The code and data are released under the NVIDIA Source Code License. Copyright © 2024, NVIDIA Corporation. All rights reserved.
-
-
-# Contact
-For questions, please contact [Bowen Wen](https://wenbowen123.github.io/).
