@@ -417,7 +417,7 @@ def depth2xyzmap(depth, K, uvs=None):
   return xyz_map
 
 
-def depth2xyzmap_batch(depths, Ks, zfar):
+def depth2xyzmap_batch(depths, Ks, zfar, use_cpu: bool = False):
   '''
   @depths: torch tensor (B,H,W)
   @Ks: torch tensor (B,3,3)
@@ -426,8 +426,12 @@ def depth2xyzmap_batch(depths, Ks, zfar):
   invalid_mask = (depths<0.001) | (depths>zfar)
   H,W = depths.shape[-2:]
   vs,us = torch.meshgrid(torch.arange(0,H),torch.arange(0,W), indexing='ij')
-  vs = vs.reshape(-1).float().cuda()[None].expand(bs,-1)
-  us = us.reshape(-1).float().cuda()[None].expand(bs,-1)
+  if use_cpu:
+    vs = vs.reshape(-1).float().cpu()[None].expand(bs,-1)
+    us = us.reshape(-1).float().cpu()[None].expand(bs,-1)
+  else:
+    vs = vs.reshape(-1).float().cuda()[None].expand(bs,-1)
+    us = us.reshape(-1).float().cuda()[None].expand(bs,-1)
   zs = depths.reshape(bs,-1)
   Ks = Ks[:,None].expand(bs,zs.shape[-1],3,3)
   xs = (us-Ks[...,0,2])*zs/Ks[...,0,0]  #(B,N)
