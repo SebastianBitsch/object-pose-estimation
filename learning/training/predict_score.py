@@ -66,7 +66,7 @@ def make_crop_data_batch(render_size, ob_in_cams, mesh, rgb, depth, K, crop_rati
   B = len(ob_in_cams)
   poseAs = torch.as_tensor(ob_in_cams, dtype=torch.float, device='cuda')
 
-  bs = 512
+  bs = 128 # BATCHSIZE
   rgb_rs = []
   depth_rs = []
   xyz_map_rs = []
@@ -198,6 +198,7 @@ class ScorePredictor:
       ids = torch.stack(ids, dim=0).reshape(-1)
       scores = torch.cat(scores, dim=0).reshape(-1)
       return ids, scores
+
 
     pose_data_iter = pose_data
     global_ids = torch.arange(len(ob_in_cams), device='cuda', dtype=torch.long)

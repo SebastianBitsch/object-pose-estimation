@@ -9,10 +9,9 @@
 
 from Utils import *
 from datareader import *
-import itertools
 from learning.training.predict_score import *
 from learning.training.predict_pose_refine import *
-import yaml
+from cluster_poses import cluster_poses
 
 
 class FoundationPose:
@@ -117,8 +116,14 @@ class FoundationPose:
 
     rot_grid = np.asarray(rot_grid)
     logging.info(f"rot_grid:{rot_grid.shape}")
-    rot_grid = mycpp.cluster_poses(30, 99999, rot_grid, self.symmetry_tfs.data.cpu().numpy())
-    rot_grid = np.asarray(rot_grid)
+
+    rot_grid = cluster_poses(
+      angle_diff   = 30, 
+      dist_diff    = 99999, 
+      poses_in     = rot_grid, 
+      symmetry_tfs = self.symmetry_tfs.data.cpu().numpy()
+    )
+
     logging.info(f"after cluster, rot_grid:{rot_grid.shape}")
     self.rot_grid = torch.as_tensor(rot_grid, device='cuda', dtype=torch.float)
     logging.info(f"self.rot_grid: {self.rot_grid.shape}")
@@ -173,6 +178,7 @@ class FoundationPose:
     depth = erode_depth(depth, radius=2, device='cuda')
     depth = bilateral_filter_depth(depth, radius=2, device='cuda')
 
+    # DEBUG: Not called
     if self.debug>=2:
       xyz_map = depth2xyzmap(depth, K)
       valid = xyz_map[...,2]>=0.001
@@ -188,6 +194,7 @@ class FoundationPose:
       pose[:3,3] = self.guess_translation(depth=depth, mask=ob_mask, K=K)
       return pose
 
+    # DEBUG: Not called
     if self.debug>=2:
       imageio.imwrite(f'{self.debug_dir}/color.png', rgb)
       cv2.imwrite(f'{self.debug_dir}/depth.png', (depth*1000).astype(np.uint16))
@@ -201,11 +208,10 @@ class FoundationPose:
     self.ob_mask = ob_mask
 
     poses = self.generate_random_pose_hypo(K=K, rgb=rgb, depth=depth, mask=ob_mask, scene_pts=None)
-    poses = poses.data.cpu().numpy()
+
     logging.info(f'poses:{poses.shape}')
     center = self.guess_translation(depth=depth, mask=ob_mask, K=K)
 
-    poses = torch.as_tensor(poses, device='cuda', dtype=torch.float)
     poses[:,:3,3] = torch.as_tensor(center.reshape(1,3), device='cuda')
 
     add_errs = self.compute_add_err_to_gt_pose(poses)

@@ -43,14 +43,17 @@ if __name__=='__main__':
 
   reader = YcbineoatReader(video_dir=args.test_scene_dir, shorter_side=None, zfar=np.inf)
 
+  # 260 mb allocated before this point for models etc.
+
   for i in range(len(reader.color_files)):
     logging.info(f'i:{i}')
     color = reader.get_color(i)
     depth = reader.get_depth(i)
-    if i==0:
+    if i == 0:
       mask = reader.get_mask(0).astype(bool)
       pose = est.register(K=reader.K, rgb=color, depth=depth, ob_mask=mask, iteration=args.est_refine_iter)
 
+      # DEBUG: Not called
       if debug>=3:
         m = mesh.copy()
         m.apply_transform(pose)

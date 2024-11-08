@@ -35,7 +35,7 @@ def make_crop_data_batch(render_size, ob_in_cams, mesh, rgb, depth, K, crop_rati
   B = len(ob_in_cams)
   poseA = torch.as_tensor(ob_in_cams, dtype=torch.float, device='cuda')
 
-  bs = 512
+  bs = 128 # BATCHSIZE
   rgb_rs = []
   depth_rs = []
   normal_rs = []
@@ -164,7 +164,7 @@ class PoseRefinePredictor:
 
     crop_ratio = self.cfg['crop_ratio']
     logging.info(f"trans_normalizer:{self.cfg['trans_normalizer']}, rot_normalizer:{self.cfg['rot_normalizer']}")
-    bs = 1024
+    bs = 128 # BATCHSIZE
 
     B_in_cams = torch.as_tensor(ob_centered_in_cams, device='cuda', dtype=torch.float)
 
@@ -176,6 +176,7 @@ class PoseRefinePredictor:
     depth_tensor = torch.as_tensor(depth, device='cuda', dtype=torch.float)
     xyz_map_tensor = torch.as_tensor(xyz_map, device='cuda', dtype=torch.float)
     trans_normalizer = self.cfg['trans_normalizer']
+
     if not isinstance(trans_normalizer, float):
       trans_normalizer = torch.as_tensor(list(trans_normalizer), device='cuda', dtype=torch.float).reshape(1,3)
 
@@ -183,6 +184,7 @@ class PoseRefinePredictor:
       logging.info("making cropped data")
       pose_data = make_crop_data_batch(self.cfg.input_resize, B_in_cams, mesh_centered, rgb_tensor, depth_tensor, K, crop_ratio=crop_ratio, normal_map=normal_map, xyz_map=xyz_map_tensor, cfg=self.cfg, glctx=glctx, mesh_tensors=mesh_tensors, dataset=self.dataset, mesh_diameter=mesh_diameter)
       B_in_cams = []
+
       for b in range(0, pose_data.rgbAs.shape[0], bs):
         A = torch.cat([pose_data.rgbAs[b:b+bs].cuda(), pose_data.xyz_mapAs[b:b+bs].cuda()], dim=1).float()
         B = torch.cat([pose_data.rgbBs[b:b+bs].cuda(), pose_data.xyz_mapBs[b:b+bs].cuda()], dim=1).float()
@@ -238,6 +240,7 @@ class PoseRefinePredictor:
     self.last_trans_update = trans_delta
     self.last_rot_update = rot_mat_delta
 
+    # VIS: not called
     if get_vis:
       logging.info("get_vis...")
       canvas = []
