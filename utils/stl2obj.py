@@ -17,9 +17,10 @@ material_contentes = """
 # Convert .stl models to simple .obj 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--file', type=str, help='Path of the file to convert, output will be in the same dir named *.ply')
-    parser.add_argument('--draw_output', type=bool, default=False, help='Should the resulting file be shown in plot')
+    parser.add_argument('--file', type=str, help='Path of the file to convert, output will be in the same dir named *.obj')
     parser.add_argument('--scale', type=float, default=1.0, help="Should the object be scaled, if so by how much")
+    parser.add_argument('--color', type=tuple, default=(0.5,0.5,0.5), help="What RGB color should the object have")
+    parser.add_argument('--draw_output', type=bool, default=False, help='Should the resulting file be shown in plot')
     parser.add_argument('--write_ascii', type=bool, default=True, help='Whether to write the file as plain text file or in binary')
     args = parser.parse_args()
 
@@ -31,13 +32,30 @@ if __name__ == "__main__":
 
     mesh = o3d.io.read_triangle_mesh(args.file)
 
+    # Color
+    color = args.color # [0.6, 0.6, 0.6]# [0, 0.651, 0.929]
+    mesh.paint_uniform_color(color)
+
+    # Move to origo and scale
     mesh.scale(args.scale, center=mesh.get_center())
+    mesh.translate(-mesh.get_center())
+    
+    # Flip model around y axis
+    # I = np.eye(4) 
+    # I[1,1] = -1
+    # mesh = mesh.transform(I)
+
+    # triangles = np.asarray(mesh.triangles)
+    # triangles = triangles[:, ::-1]
+    # mesh.triangles = o3d.utility.Vector3iVector(triangles)
+    
+    mesh.compute_vertex_normals()
+    mesh.compute_triangle_normals()
     mesh.compute_vertex_normals()
 
     # TEXTURE
-    texture = np.ones((16,16,3), dtype=np.uint8) * 100 # grey color
+    texture = (255 * np.tile(color, (16,16,1))).astype(np.uint8)
     o3d.io.write_image(os.path.join(base_path, "material_0.png"), o3d.geometry.Image(texture))
-
 
     # MATERIAL
     with open(os.path.join(base_path, "material.mtl"), "w") as mat_file:
@@ -46,7 +64,7 @@ if __name__ == "__main__":
 
     # OBJECT
     file_out = args.file.replace(".stl", ".obj")
-    
+
     with open(file_out, "r+") as f:
 
         # Add reference to the material and texture
@@ -76,4 +94,5 @@ if __name__ == "__main__":
 
     # Draw output
     if args.draw_output:
-        o3d.visualization.draw_geometries([mesh])
+        coordinate_frame = o3d.geometry.TriangleMesh.create_coordinate_frame(size=0.1, origin=[0, 0, 0])
+        o3d.visualization.draw_geometries([mesh, coordinate_frame])
