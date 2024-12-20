@@ -9,17 +9,17 @@ from PIL import Image
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('--output_dir', type=str, help='Path of where to output the files into a rgb/ depth/ and cloud/ dir')
-    parser.add_argument('--im_w', type=int, default=1920, help='Width of captured frame')
-    parser.add_argument('--im_h', type=int, default=1080, help='Width of captured frame')
-    parser.add_argument('--n_frames', type=int, default=100, help='How many frames to capture')
-    parser.add_argument('--fps', type=int, default=30, help='How many frames to capture per second')
-    parser.add_argument('--resolution', type=str, default="vga", help="What resolution to use, select from: [HD4K, QHDPLUS, HD2K, HD1080, HD1200, HD720, SVGA, VGA, AUTO, LAST]")
-    parser.add_argument('--unit', type=str, default="meter", help="What unit should the measurements in, select one from: [MILLIMETER, CENTIMETER, METER, INCH, FOOT, LAST]")
-    parser.add_argument('--depth_mode', type=str, default="quality", help="What quality should depth map be captured in, select one from: [NONE, PERFORMANCE, QUALITY, ULTRA, NEURAL, NEURAL_PLUS, LAST]")
-    parser.add_argument('--min_depth', type=float, default=0.2, help="What is the min depth of the scene")
-    parser.add_argument('--max_depth', type=float, default=5.0, help="What is the max depth of the scene")
-    parser.add_argument('--depth_stabilization', type=float, default=0.0, help="How much depth stabilization to use")
+    parser.add_argument('--output_dir',          type=str,                      help='Path of where to output the files into a rgb/ depth/ and cloud/ dir')
+    parser.add_argument('--im_w',                type=int,   default=1920,      help='Width of captured frame')
+    parser.add_argument('--im_h',                type=int,   default=1080,      help='Width of captured frame')
+    parser.add_argument('--n_frames',            type=int,   default=100,       help='How many frames to capture')
+    parser.add_argument('--fps',                 type=int,   default=30,        help='How many frames to capture per second')
+    parser.add_argument('--resolution',          type=str,   default="vga",     help="What resolution to use, select from: [HD4K, QHDPLUS, HD2K, HD1080, HD1200, HD720, SVGA, VGA, AUTO, LAST]")
+    parser.add_argument('--unit',                type=str,   default="meter",   help="What unit should the measurements in, select one from: [MILLIMETER, CENTIMETER, METER, INCH, FOOT, LAST]")
+    parser.add_argument('--depth_mode',          type=str,   default="quality", help="What quality should depth map be captured in, select one from: [NONE, PERFORMANCE, QUALITY, ULTRA, NEURAL, NEURAL_PLUS, LAST]")
+    parser.add_argument('--min_depth',           type=float, default=0.2,       help="What is the min depth of the scene")
+    parser.add_argument('--max_depth',           type=float, default=5.0,       help="What is the max depth of the scene")
+    parser.add_argument('--depth_stabilization', type=float, default=0.0,       help="How much depth stabilization to use")
 
     args = parser.parse_args()
 
